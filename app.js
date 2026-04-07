@@ -1,5 +1,6 @@
 const characterData = {
-    atributos: { "FOR": 0, "VIG": 0, "AGI": 0, "INT": 0, "POD": 0},
+    // PRE Removido aqui
+    atributos: { "FOR": 0, "VIG": 0, "AGI": 0, "INT": 0, "POD": 0 },
     pericias: [
         { nome: "Acrobacia", attr: "AGI", mod: 0 },
         { nome: "Adestramento", attr: "INT", mod: 0 },
@@ -8,19 +9,19 @@ const characterData = {
         { nome: "Atualidades", attr: "INT", mod: 0 },
         { nome: "Ciências", attr: "INT", mod: 0 },
         { nome: "Crime", attr: "AGI", mod: 0 },
-        { nome: "Diplomacia", attr: "POD", mod: 0 },
-        { nome: "Enganação", attr: "POD", mod: 0 },
+        { nome: "Diplomacia", attr: "POD", mod: 0 }, 
+        { nome: "Enganação", attr: "POD", mod: 0 },  
         { nome: "Fortitude", attr: "VIG", mod: 0 },
         { nome: "Furtividade", attr: "AGI", mod: 0 },
         { nome: "Iniciativa", attr: "AGI", mod: 0 },
-        { nome: "Intimidação", attr: "POD", mod: 0 },
-        { nome: "Intuição", attr: "POD", mod: 0 },
+        { nome: "Intimidação", attr: "POD", mod: 0 }, 
+        { nome: "Intuição", attr: "POD", mod: 0 },  
         { nome: "Investigação", attr: "INT", mod: 0 },
         { nome: "Luta", attr: "FOR", mod: 0 },
         { nome: "Medicina", attr: "INT", mod: 0 },
         { nome: "Arcanismo", attr: "POD", mod: 0 },
         { nome: "Monstrologia", attr: "INT", mod: 0 },
-        { nome: "Percepção", attr: "POD", mod: 0 },
+        { nome: "Percepção", attr: "POD", mod: 0 },  
         { nome: "Pilotagem", attr: "AGI", mod: 0 },
         { nome: "Pontaria", attr: "AGI", mod: 0 },
         { nome: "Profissão", attr: "INT", mod: 0 },
@@ -56,10 +57,13 @@ function rolarPericia(nomePericia, attrSigla, index) {
     executarRolagem(nomePericia, qtdDados, mod);
 }
 
-// Função centralizada de rolagem e exibição
 function executarRolagem(label, qtd, mod) {
+    console.log(`Rolando ${qtd}d20 para ${label}`); 
+    
+    let quantidadeEfetiva = qtd <= 0 ? 1 : qtd;
+    
     let resultados = [];
-    for (let i = 0; i < qtd; i++) {
+    for (let i = 0; i < quantidadeEfetiva; i++) {
         resultados.push(Math.floor(Math.random() * 20) + 1);
     }
     
@@ -67,10 +71,12 @@ function executarRolagem(label, qtd, mod) {
     const total = melhorDado + mod;
     
     const htmlResultado = `
-        <p>Dados: <strong>[${resultados.join(", ")}]</strong></p>
-        <p>Melhor: ${melhorDado} ${mod !== 0 ? `+ Mod: ${mod}` : ''}</p>
-        <hr style="border-color: var(--border-color)">
-        <h2 style="color: var(--text-gold); text-align: center; margin: 5px 0;">Total: ${total}</h2>
+        <div style="font-family: 'Quicksand', sans-serif; color: #e0e0e0;">
+            <p style="margin: 5px 0;">Dados: <strong style="color: #9c4dcc;">[${resultados.join(", ")}]</strong></p>
+            <p style="margin: 5px 0;">Melhor: ${melhorDado} ${mod !== 0 ? `<span style="color: #c5a059;">+ ${mod}</span>` : ''}</p>
+            <hr style="border: 0; border-top: 1px solid #3e2723; margin: 10px 0;">
+            <h2 style="color: #c5a059; text-align: center; margin: 0; font-family: 'Cinzel';">Total: ${total}</h2>
+        </div>
     `;
     
     UI.showPopup(label, htmlResultado);
