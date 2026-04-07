@@ -1,15 +1,13 @@
-// Ababa
 const UI = {
     renderAttributes(attributes) {
         const container = document.getElementById('attr-container');
         if (!container) return;
         container.innerHTML = Object.entries(attributes).map(([name, value]) => `
-            <div class="attr-card">
-                <span class="attr-name">${name}</span>
-                <input type="number" class="attr-value-input" value="${value}" 
-                       onchange="updateAttr('${name}', this.value)">
-                <button class="roll-attr-btn" onclick="rolarDadoPuro('${name}')" title="Rolar teste puro">ROLAR</button>
-            </div>
+              <div class="attr-card">
+    <input class="attr-value-input">
+    <span class="attr-name">${name}</span>
+    <button class="roll-attr-btn" onclick="rolarDadoPuro('${name}')" title="Rolar teste puro">ROLAR</button>
+</div>
         `).join('');
     },
 
