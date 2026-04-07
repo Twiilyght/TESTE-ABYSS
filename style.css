@@ -1,0 +1,116 @@
+:root {
+    --bg-dark: #0a0a0c;
+    --panel-bg: #15151a;
+    --primary-purple: #6a1b9a;
+    --light-purple: #9c4dcc;
+    --text-gold: #c5a059;
+    --text-light: #e0e0e0;
+    --border-color: #3e2723;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Quicksand', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-image: radial-gradient(circle, #1a0a2e 0%, #0a0a0c 100%);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.title {
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    color: var(--primary-purple);
+    text-shadow: 0 0 10px rgba(156, 77, 204, 0.5);
+    text-transform: uppercase;
+}
+
+.section-box {
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+    position: relative;
+}
+
+.section-title {
+    font-family: 'Cinzel', serif;
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--bg-dark);
+    padding: 0 10px;
+    color: var(--text-gold);
+    font-weight: bold;
+}
+
+/* Atributos */
+.attributes-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.attr-card {
+    border: 1px solid var(--primary-purple);
+    padding: 10px;
+    text-align: center;
+    min-width: 80px;
+    background: linear-gradient(145deg, #1d1d25, #15151a);
+    border-radius: 4px;
+}
+
+.attr-name {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--light-purple);
+    text-transform: uppercase;
+}
+
+.attr-value {
+    font-size: 2rem;
+    font-family: 'Cinzel', serif;
+    color: #fff;
+}
+
+/* Perícias */
+.skills-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(106, 27, 154, 0.2);
+}
+
+.skill-info {
+    font-size: 0.9rem;
+}
+
+.skill-attr-tag {
+    font-size: 0.7rem;
+    color: var(--text-gold);
+    margin-left: 5px;
+}
+
+.skill-mod {
+    background: var(--primary-purple);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+}
