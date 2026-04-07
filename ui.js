@@ -1,3 +1,4 @@
+// Ababa
 const UI = {
     renderAttributes(attributes) {
         const container = document.getElementById('attr-container');
