@@ -13,6 +13,12 @@
             <h1 class="title">Personagem</h1>
         </header>
 
+        <div class="difficulty-selector">
+            <button class="diff-btn facil" data-nivel="facil" onclick="definirDificuldade('facil')">FÁCIL</button>
+            <button class="diff-btn normal active" data-nivel="normal" onclick="definirDificuldade('normal')">NORMAL</button>
+            <button class="diff-btn dificil" data-nivel="dificil" onclick="definirDificuldade('dificil')">DIFÍCIL</button>
+        </div>
+        
         <section id="attributes" class="section-box">
             <div class="section-title">Atributos</div>
             <div class="attributes-grid" id="attr-container">
