@@ -5,21 +5,35 @@ const UI = {
         container.innerHTML = Object.entries(attributes).map(([name, value]) => `
             <div class="attr-card">
                 <span class="attr-name">${name}</span>
-                <span class="attr-value">${value}</span>
+                <input type="number" class="attr-value-input" value="${value}" 
+                       onchange="updateAttr('${name}', this.value)">
+                <button class="roll-attr-btn" onclick="rolarDadoPuro('${name}')">ROLAR</button>
             </div>
         `).join('');
     },
 
     renderSkills(skills) {
         const container = document.getElementById('skills-container');
-        container.innerHTML = skills.map(skill => `
-            <div class="skill-item" onclick="rolarPericia('${skill.nome}', '${skill.attr}', ${skill.mod})">
-                <div class="skill-info">
+        container.innerHTML = skills.map((skill, index) => `
+            <div class="skill-item">
+                <div class="skill-info" onclick="rolarPericia('${skill.nome}', '${skill.attr}', ${index})">
                     <strong class="skill-name">${skill.nome}</strong>
                     <span class="skill-attr-tag">${skill.attr}</span>
                 </div>
-                <div class="skill-mod">+${skill.mod}</div>
+                <input type="number" class="skill-mod-input" value="${skill.mod}" 
+                       onchange="updateSkillMod(${index}, this.value)">
             </div>
         `).join('');
+    },
+
+    showPopup(title, content) {
+        const popup = document.getElementById('dice-popup');
+        const contentDiv = document.getElementById('popup-content');
+        
+        contentDiv.innerHTML = `
+            <span class="popup-title">${title}</span>
+            <div>${content}</div>
+        `;
+        popup.style.display = 'block';
     }
 };
