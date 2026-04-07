@@ -1,10 +1,3 @@
-let dificuldadeAtual = "normal";
-
-function setDificuldade(nivel) {
-    dificuldadeAtual = nivel;
-    alert("Dificuldade: " + nivel);
-}
-
 const characterData = {
     // PRE Removido aqui
     atributos: { "FOR": 0, "VIG": 0, "AGI": 0, "INT": 0, "POD": 0 },
@@ -58,24 +51,10 @@ function rolarDadoPuro(attrSigla) {
 }
 
 // Rola perícia pegando o modificador atualizado
-function rolarPericia(nomePericia, attrSigla, mod) {
+function rolarPericia(nomePericia, attrSigla, index) {
     const qtdDados = characterData.atributos[attrSigla] || 1;
-    let resultados = [];
-    
-    for (let i = 0; i < qtdDados; i++) {
-        resultados.push(Math.floor(Math.random() * 20) + 1);
-    }
-
-    const dadoFinal = escolherDado(resultados);
-    const total = dadoFinal + mod;
-    const classificacao = classificarResultado(dadoFinal);
-
-    alert(`Rolagem de ${nomePericia} (${attrSigla})
-Dados: [${resultados.join(", ")}]
-Resultado usado: ${dadoFinal}
-Total: ${total}
-
->>> ${classificacao} <<<`);
+    const mod = characterData.pericias[index].mod;
+    executarRolagem(nomePericia, qtdDados, mod);
 }
 
 function executarRolagem(label, qtd, mod) {
@@ -88,54 +67,8 @@ function executarRolagem(label, qtd, mod) {
         resultados.push(Math.floor(Math.random() * 20) + 1);
     }
     
-function escolherDado(resultados) {
-    const sorted = [...resultados].sort((a, b) => b - a);
-
-    // Se tiver 2 dados e cair 1 e 20 → média = 13
-    if (resultados.length === 2 && resultados.includes(1) && resultados.includes(20)) {
-        return 13;
-    }
-
-    // Se tiver 3+ dados e tiver 1 e 20 → pega o segundo maior
-    if (resultados.length >= 3 && resultados.includes(1) && resultados.includes(20)) {
-        return sorted[1];
-    }
-
-    // normal → maior dado
-    return sorted[0];
-}
-
-function classificarResultado(valor) {
-    if (valor === 1) return "Falha Crítica";
-    if (valor === 20) return "Sucesso Extremo";
-
-    const tabela = {
-        facil: {
-            falha: [2, 9],
-            sucesso: [10, 19]
-        },
-        normal: {
-            falha: [2, 12],
-            sucesso: [13, 19]
-        },
-        dificil: {
-            falha: [2, 15],
-            sucesso: [16, 19]
-        }
-    };
-
-    const zona = tabela[dificuldadeAtual];
-
-    if (valor >= zona.falha[0] && valor <= zona.falha[1]) {
-        return "Falha Normal";
-    }
-
-    if (valor >= zona.sucesso[0] && valor <= zona.sucesso[1]) {
-        return "Sucesso Normal";
-    }
-
-    return "Erro";
-}
+    const melhorDado = Math.max(...resultados);
+    const total = melhorDado + mod;
     
     const htmlResultado = `
         <div style="font-family: 'Quicksand', sans-serif; color: #e0e0e0;">
