@@ -1,12 +1,5 @@
 const characterData = {
-    atributos: {
-        "FOR": 2,
-        "VIG": 3,
-        "AGI": 1,
-        "INT": 4,
-        "POD": 2,
-        "PRE": 2 
-    },
+    atributos: { "FOR": 0, "VIG": 0, "AGI": 0, "INT": 0, "POD": 0},
     pericias: [
         { nome: "Acrobacia", attr: "AGI", mod: 0 },
         { nome: "Adestramento", attr: "PRE", mod: 0 },
@@ -40,21 +33,47 @@ const characterData = {
     ]
 };
 
-function rolarPericia(nomePericia, attrSigla, mod) {
+// Atualiza o valor do atributo no objeto
+function updateAttr(name, value) {
+    characterData.atributos[name] = parseInt(value) || 0;
+}
+
+// Atualiza o modificador da perícia no objeto
+function updateSkillMod(index, value) {
+    characterData.pericias[index].mod = parseInt(value) || 0;
+}
+
+// Rola apenas os dados do atributo (ex: Força 2 rola 2d20)
+function rolarDadoPuro(attrSigla) {
     const qtdDados = characterData.atributos[attrSigla] || 1;
+    executarRolagem(`Teste de ${attrSigla}`, qtdDados, 0);
+}
+
+// Rola perícia pegando o modificador atualizado
+function rolarPericia(nomePericia, attrSigla, index) {
+    const qtdDados = characterData.atributos[attrSigla] || 1;
+    const mod = characterData.pericias[index].mod;
+    executarRolagem(nomePericia, qtdDados, mod);
+}
+
+// Função centralizada de rolagem e exibição
+function executarRolagem(label, qtd, mod) {
     let resultados = [];
-    
-    for (let i = 0; i < qtdDados; i++) {
+    for (let i = 0; i < qtd; i++) {
         resultados.push(Math.floor(Math.random() * 20) + 1);
     }
     
     const melhorDado = Math.max(...resultados);
     const total = melhorDado + mod;
     
-    alert(`Rolagem de ${nomePericia} (${attrSigla}):
-Dados: [${resultados.join(", ")}]
-Melhor: ${melhorDado} + Mod: ${mod}
-Total: ${total}`);
+    const htmlResultado = `
+        <p>Dados: <strong>[${resultados.join(", ")}]</strong></p>
+        <p>Melhor: ${melhorDado} ${mod !== 0 ? `+ Mod: ${mod}` : ''}</p>
+        <hr style="border-color: var(--border-color)">
+        <h2 style="color: var(--text-gold); text-align: center; margin: 5px 0;">Total: ${total}</h2>
+    `;
+    
+    UI.showPopup(label, htmlResultado);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
