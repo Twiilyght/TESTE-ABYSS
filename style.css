@@ -153,6 +153,77 @@ body {
 .skills-list::-webkit-scrollbar {
     width: 5px;
 }
+
+/* Estilo para os inputs de Atributos e Perícias */
+.attr-value-input, .skill-mod-input {
+    background: transparent;
+    border: 1px solid var(--primary-purple);
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.attr-value-input {
+    font-size: 1.5rem;
+    width: 50px;
+}
+
+.skill-mod-input {
+    width: 40px;
+    font-weight: bold;
+    background: var(--primary-purple);
+}
+
+/* Botão de Rolar Atributo */
+.roll-attr-btn {
+    cursor: pointer;
+    background: var(--light-purple);
+    border: none;
+    color: white;
+    font-size: 0.7rem;
+    margin-top: 5px;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+
+/* Pop-up de Resultado (Canto Inferior Direito) */
+#dice-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 250px;
+    background: var(--panel-bg);
+    border: 2px solid var(--text-gold);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    z-index: 1000;
+    display: none; /* Escondido por padrão */
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(110%); }
+    to { transform: translateX(0); }
+}
+
+.popup-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: var(--text-gold);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.popup-title {
+    color: var(--light-purple);
+    font-family: 'Cinzel', serif;
+    margin-bottom: 10px;
+    display: block;
+    border-bottom: 1px solid var(--border-color);
+}
 .skills-list::-webkit-scrollbar-thumb {
     background: var(--primary-purple);
     border-radius: 10px;
