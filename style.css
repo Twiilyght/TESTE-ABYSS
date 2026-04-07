@@ -82,10 +82,14 @@ body {
 }
 
 /* Perícias */
+/* --- Perícias (Organizado e Mesclado) --- */
 .skills-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 .skill-item {
@@ -94,29 +98,6 @@ body {
     align-items: center;
     padding: 5px 10px;
     border-bottom: 1px solid rgba(106, 27, 154, 0.2);
-}
-
-.skill-info {
-    font-size: 0.9rem;
-}
-
-.skill-attr-tag {
-    font-size: 0.7rem;
-    color: var(--text-gold);
-    margin-left: 5px;
-}
-
-.skill-mod {
-    background: var(--primary-purple);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: bold;
-    min-width: 30px;
-    text-align: center;
-}
-
-/* Torna a perícia clicável e com efeito de hover */
-.skill-item {
     cursor: pointer;
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
@@ -130,6 +111,7 @@ body {
 
 .skill-name {
     color: var(--text-light);
+    font-size: 0.9rem;
 }
 
 .skill-attr-tag {
@@ -139,22 +121,7 @@ body {
     font-weight: bold;
 }
 
-/* Ajuste para a lista de perícias não ficar gigante */
-.skills-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 8px;
-    max-height: 500px; /* Adiciona scroll se tiver muita perícia */
-    overflow-y: auto;
-    padding-right: 10px;
-}
-
-/* Customização do Scrollbar para combinar com o roxo */
-.skills-list::-webkit-scrollbar {
-    width: 5px;
-}
-
-/* Estilo para os inputs de Atributos e Perícias */
+/* --- Inputs e Botões --- */
 .attr-value-input, .skill-mod-input {
     background: transparent;
     border: 1px solid var(--primary-purple);
@@ -175,7 +142,6 @@ body {
     background: var(--primary-purple);
 }
 
-/* Botão de Rolar Atributo */
 .roll-attr-btn {
     cursor: pointer;
     background: var(--light-purple);
@@ -185,9 +151,14 @@ body {
     margin-top: 5px;
     border-radius: 3px;
     padding: 2px 5px;
+    transition: background 0.2s;
 }
 
-/* Pop-up de Resultado (Canto Inferior Direito) */
+.roll-attr-btn:hover {
+    background: var(--primary-purple);
+}
+
+/* --- Pop-up de Resultado --- */
 #dice-popup {
     position: fixed;
     bottom: 20px;
@@ -199,7 +170,7 @@ body {
     padding: 15px;
     box-shadow: 0 0 20px rgba(0,0,0,0.8);
     z-index: 1000;
-    display: none; /* Escondido por padrão */
+    display: none;
     animation: slideIn 0.3s ease-out;
 }
 
@@ -224,6 +195,12 @@ body {
     display: block;
     border-bottom: 1px solid var(--border-color);
 }
+
+/* --- Scrollbar Customizado --- */
+.skills-list::-webkit-scrollbar {
+    width: 5px;
+}
+
 .skills-list::-webkit-scrollbar-thumb {
     background: var(--primary-purple);
     border-radius: 10px;
