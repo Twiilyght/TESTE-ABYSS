@@ -114,3 +114,46 @@ body {
     min-width: 30px;
     text-align: center;
 }
+
+/* Torna a perícia clicável e com efeito de hover */
+.skill-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.skill-item:hover {
+    background: rgba(106, 27, 154, 0.15);
+    border-left: 3px solid var(--light-purple);
+    transform: translateX(5px);
+}
+
+.skill-name {
+    color: var(--text-light);
+}
+
+.skill-attr-tag {
+    color: #666;
+    font-size: 0.7rem;
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+/* Ajuste para a lista de perícias não ficar gigante */
+.skills-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+    max-height: 500px; /* Adiciona scroll se tiver muita perícia */
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Customização do Scrollbar para combinar com o roxo */
+.skills-list::-webkit-scrollbar {
+    width: 5px;
+}
+.skills-list::-webkit-scrollbar-thumb {
+    background: var(--primary-purple);
+    border-radius: 10px;
+}
