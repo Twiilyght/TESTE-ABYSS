@@ -155,7 +155,36 @@ function executarRolagem(label, qtd, mod) {
     UI.showPopup(label, html);
 }
 
+// Função para salvar no LocalStorage do navegador
+function salvarFicha() {
+    const dataString = JSON.stringify(characterData);
+    localStorage.setItem('ficha_abyss_data', dataString);
+
+    // Feedback Visual
+    const feedback = document.getElementById('save-feedback');
+    feedback.style.display = 'inline';
+    
+    // Esconde a mensagem após 3 segundos
+    setTimeout(() => {
+        feedback.style.display = 'none';
+    }, 3000);
+}
+
+// Função para carregar os dados ao abrir a página
+function carregarFicha() {
+    const dadosSalvos = localStorage.getItem('ficha_abyss_data');
+    if (dadosSalvos) {
+        const dadosParseados = JSON.parse(dadosSalvos);
+        
+        // Atualiza o objeto characterData com os valores salvos
+        characterData.atributos = dadosParseados.atributos;
+        characterData.pericias = dadosParseados.pericias;
+    }
+}
+
+// Modifique o seu DOMContentLoaded para carregar antes de renderizar
 document.addEventListener('DOMContentLoaded', () => {
+    carregarFicha(); // <--- Adicione isso aqui
     UI.renderAttributes(characterData.atributos);
     UI.renderSkills(characterData.pericias);
 });
