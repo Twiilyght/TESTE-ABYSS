@@ -201,6 +201,33 @@ body {
     width: 5px;
 }
 
+.difficulty-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.diff-btn {
+    background: #15151a;
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-family: 'Cinzel', serif;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+.diff-btn.active.facil { border-color: #00e676; box-shadow: 0 0 10px #00e67644; color: #00e676; }
+.diff-btn.active.normal { border-color: #448aff; box-shadow: 0 0 10px #448aff44; color: #448aff; }
+.diff-btn.active.dificil { border-color: #ff5252; box-shadow: 0 0 10px #ff525244; color: #ff5252; }
+
+.diff-btn:hover {
+    background: var(--primary-purple);
+    color: white;
+}
+
 .skills-list::-webkit-scrollbar-thumb {
     background: var(--primary-purple);
     border-radius: 10px;
