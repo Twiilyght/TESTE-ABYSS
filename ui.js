@@ -12,10 +12,10 @@ const UI = {
     renderSkills(skills) {
         const container = document.getElementById('skills-container');
         container.innerHTML = skills.map(skill => `
-            <div class="skill-item">
+            <div class="skill-item" onclick="rolarPericia('${skill.nome}', '${skill.attr}', ${skill.mod})">
                 <div class="skill-info">
-                    <strong>${skill.nome}</strong>
-                    <span class="skill-attr-tag">(${skill.attr})</span>
+                    <strong class="skill-name">${skill.nome}</strong>
+                    <span class="skill-attr-tag">${skill.attr}</span>
                 </div>
                 <div class="skill-mod">+${skill.mod}</div>
             </div>
