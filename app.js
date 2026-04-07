@@ -5,7 +5,7 @@ const characterData = {
         "AGI": 1,
         "INT": 4,
         "POD": 2,
-        "PRE": 2 // Adicionei Presença que aparecia em algumas perícias
+        "PRE": 2 
     },
     pericias: [
         { nome: "Acrobacia", attr: "AGI", mod: 0 },
