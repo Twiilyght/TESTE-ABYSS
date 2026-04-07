@@ -1,6 +1,5 @@
 const characterData = {
-    // PRE Removido aqui
-    atributos: { "FOR": 0, "VIG": 0, "AGI": 0, "INT": 0, "POD": 0 },
+    atributos: { "FOR": 1, "VIG": 1, "AGI": 1, "INT": 1, "POD": 1 },
     pericias: [
         { nome: "Acrobacia", attr: "AGI", mod: 0 },
         { nome: "Adestramento", attr: "INT", mod: 0 },
@@ -9,19 +8,19 @@ const characterData = {
         { nome: "Atualidades", attr: "INT", mod: 0 },
         { nome: "Ciências", attr: "INT", mod: 0 },
         { nome: "Crime", attr: "AGI", mod: 0 },
-        { nome: "Diplomacia", attr: "POD", mod: 0 }, 
-        { nome: "Enganação", attr: "POD", mod: 0 },  
+        { nome: "Diplomacia", attr: "POD", mod: 0 }, // Era PRE
+        { nome: "Enganação", attr: "POD", mod: 0 },  // Era PRE
         { nome: "Fortitude", attr: "VIG", mod: 0 },
         { nome: "Furtividade", attr: "AGI", mod: 0 },
         { nome: "Iniciativa", attr: "AGI", mod: 0 },
-        { nome: "Intimidação", attr: "POD", mod: 0 }, 
-        { nome: "Intuição", attr: "POD", mod: 0 },  
+        { nome: "Intimidação", attr: "POD", mod: 0 }, // Era PRE
+        { nome: "Intuição", attr: "POD", mod: 0 },    // Era PRE
         { nome: "Investigação", attr: "INT", mod: 0 },
         { nome: "Luta", attr: "FOR", mod: 0 },
         { nome: "Medicina", attr: "INT", mod: 0 },
         { nome: "Arcanismo", attr: "POD", mod: 0 },
         { nome: "Monstrologia", attr: "INT", mod: 0 },
-        { nome: "Percepção", attr: "POD", mod: 0 },  
+        { nome: "Percepção", attr: "POD", mod: 0 },   // Era PRE
         { nome: "Pilotagem", attr: "AGI", mod: 0 },
         { nome: "Pontaria", attr: "AGI", mod: 0 },
         { nome: "Profissão", attr: "INT", mod: 0 },
@@ -58,8 +57,10 @@ function rolarPericia(nomePericia, attrSigla, index) {
 }
 
 function executarRolagem(label, qtd, mod) {
-    console.log(`Rolando ${qtd}d20 para ${label}`); 
+    console.log(`Rolando ${qtd}d20 para ${label}`); // Teste de debug
     
+    // Se o atributo for 0 ou menor, rola 2d20 e pega o pior (regra comum), 
+    // mas aqui faremos o simples: rolar pelo menos 1 dado.
     let quantidadeEfetiva = qtd <= 0 ? 1 : qtd;
     
     let resultados = [];
