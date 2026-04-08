@@ -3,268 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha RPG - Sistema Abyss</title>
+    <title>Abyss RPG - Combat & Success Update</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0a0c;
-            --panel-bg: #15151a;
-            --primary-purple: #6a1b9a;
-            --light-purple: #9c4dcc;
-            --text-gold: #c5a059;
-            --text-light: #e0e0e0;
-            --border-color: #3e2723;
-            
-            --crit-fail: #660000;
-            --fail: #ff5252;
-            --success: #448aff;
-            --good-success: #00d4ff;
-            --crit-success: #00e676;
+            --bg-dark: #050507;
+            --panel-bg: rgba(21, 21, 26, 0.95);
+            --primary-purple: #7b1fa2;
+            --light-purple: #bc4ed8;
+            --text-gold: #d4af37;
+            --text-light: #f0f0f0;
+            --border-color: #4a3427;
         }
 
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        * { box-sizing: border-box; }
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; overflow-x: hidden; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Quicksand', sans-serif;
-            margin: 0; padding: 20px;
-            background-image: radial-gradient(circle, #1a0a2e 0%, #0a0a0c 100%);
-        }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 70px; background: #000; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding-top: 40px; z-index: 1000; }
+        .sidebar-btn { background: rgba(255,255,255,0.03); border: 1px solid transparent; color: var(--text-gold); font-size: 1.6rem; cursor: pointer; margin-bottom: 30px; width: 50px; height: 50px; border-radius: 12px; transition: 0.4s; display: flex; align-items: center; justify-content: center; }
+        .sidebar-btn.active { border-color: var(--light-purple); box-shadow: 0 0 15px var(--primary-purple); background: rgba(123, 31, 162, 0.2); }
 
-        .container { max-width: 1100px; margin: 0 auto; }
-        .title { font-family: 'Cinzel', serif; text-align: center; color: var(--primary-purple); text-shadow: 0 0 10px rgba(156, 77, 204, 0.5); text-transform: uppercase; margin-bottom: 30px; }
+        .container { max-width: 1400px; margin: 0 auto 0 100px; flex-grow: 1; padding: 40px 20px; }
+        .title { font-family: 'Cinzel', serif; text-align: center; color: var(--primary-purple); text-shadow: 0 0 20px rgba(123, 31, 162, 0.5); letter-spacing: 8px; font-size: 3rem; margin-bottom: 40px; }
 
-        .section-box {
-            background: var(--panel-bg); border: 2px solid var(--border-color);
-            border-radius: 0; margin-bottom: 20px; padding: 35px 20px 20px 20px; position: relative;
-        }
+        .page-area { display: none; }
+        .page-area.active { display: block; }
 
-        .section-title {
-            font-family: 'Cinzel', serif; position: absolute; top: -14px; left: 20px;
-            background: var(--bg-dark); padding: 0 10px; color: var(--text-gold); font-weight: bold;
-        }
+        .section-box { background: var(--panel-bg); border: 1px solid var(--border-color); margin-bottom: 30px; padding: 35px 20px 20px; border-radius: 8px; position: relative; }
+        .section-title { font-family: 'Cinzel', serif; position: absolute; top: -12px; left: 25px; background: var(--bg-dark); padding: 0 15px; color: var(--text-gold); font-size: 0.9rem; letter-spacing: 2px; }
 
-        /* ATRIBUTOS HEXAGONAIS */
-        .attributes-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; padding: 10px 0; }
-        .attr-container-outer { position: relative; width: 100px; height: 115px; filter: drop-shadow(0 0 5px rgba(156, 77, 204, 0.4)); transition: 0.3s ease; }
-        .attr-container-outer:hover { transform: translateY(-5px); filter: drop-shadow(0 0 12px rgba(156, 77, 204, 0.8)); }
+        /* ATRIBUTOS COM ANIMAÇÃO */
+        .attributes-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; }
+        .attr-container-outer { position: relative; width: 110px; height: 125px; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .attr-container-outer:hover { transform: translateY(-10px); filter: drop-shadow(0 0 15px var(--primary-purple)); }
+        .attr-hexagon-border { position: absolute; width: 100%; height: 100%; background: var(--primary-purple); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; justify-content: center; align-items: center; }
+        .attr-hexagon-inner { width: 94%; height: 94%; background: #0c0c10; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .attr-value-input { background: transparent; border: none; color: #fff; font-family: 'Cinzel'; font-size: 2rem; width: 60px; text-align: center; outline: none; }
         
-        .attr-hexagon-border {
-            position: absolute; width: 100%; height: 100%; background: var(--primary-purple);
-            clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-            display: flex; justify-content: center; align-items: center;
-        }
-        .attr-hexagon-inner {
-            width: 92%; height: 92%; background: #08080a;
-            clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .attr-value-input { 
-            background: transparent; border: none; color: #fff; font-family: 'Cinzel', serif; font-size: 2.5rem;
-            width: 70px; text-align: center; outline: none; margin-top: 5px;
-        }
-        .attr-name { font-size: 0.75rem; color: var(--light-purple); font-weight: bold; text-transform: uppercase; margin-top: -4px; }
-        .d20-emoji-attr { font-size: 1.3rem; cursor: pointer; transition: 0.2s; margin-top: 2px; }
-
         /* DIFICULDADE */
-        .difficulty-selector { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
-        .diff-btn {
-            background: #111; border: 1px solid var(--border-color); color: #555;
-            padding: 10px 25px; cursor: pointer; font-family: 'Cinzel'; transition: 0.3s;
-        }
-        .diff-btn:hover { border-color: var(--light-purple); color: var(--text-light); box-shadow: 0 0 15px rgba(156, 77, 204, 0.3); }
-        .diff-btn.active { border-color: var(--text-gold); color: var(--text-gold); box-shadow: 0 0 10px rgba(197, 160, 89, 0.3); }
+        .difficulty-selector { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .diff-btn { background: #111; border: 1px solid #333; color: #666; padding: 10px 25px; cursor: pointer; font-family: 'Cinzel'; border-radius: 4px; transition: 0.3s; }
+        .diff-btn.active { border-color: var(--text-gold); color: var(--text-gold); background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
 
-        /* PERÍCIAS */
-        .skills-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
-        .skill-item {
-            background: #000; border: 1px solid var(--border-color);
-            padding: 8px 12px; display: flex; align-items: center; justify-content: space-between;
-            transition: all 0.3s ease; cursor: pointer; border-left: 3px solid var(--primary-purple);
+        /* PERÍCIAS FINAS */
+        .skills-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+        .skill-item { 
+            background: rgba(0,0,0,0.3); border: 1px solid #2a2a2a; padding: 6px 10px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            border-left: 3px solid var(--primary-purple); border-radius: 4px; 
+            cursor: pointer; transition: 0.2s; 
         }
-        .skill-item:hover { 
-            transform: translateY(-3px); 
-            border-color: var(--light-purple); 
-            box-shadow: 0 5px 15px rgba(156, 77, 204, 0.2);
-            background: #0a0a0f;
-        }
-        .skill-info { flex-grow: 1; pointer-events: none; }
-        .skill-attr { font-size: 0.7rem; color: #666; font-family: 'Cinzel'; }
+        .skill-item:hover { background: rgba(123, 31, 162, 0.1); border-color: var(--light-purple); }
+        .skill-name { font-size: 0.85rem; font-weight: bold; color: #ddd; }
+        
+        /* COMBATE GRID */
+        .abilities-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .spell-section { grid-column: 1 / -1; }
 
-        .skill-controls { display: flex; gap: 5px; align-items: center; }
-        .skill-select {
-            background: #111; border: 1px solid #333; color: var(--light-purple);
-            font-size: 0.8rem; padding: 2px; cursor: pointer; outline: none;
-        }
-        .skill-mod-input {
-            width: 35px; background: #1a1a1a; border: 1px solid #333; color: var(--text-gold);
-            text-align: center; font-family: 'Cinzel'; outline: none; font-size: 0.9rem; padding: 2px 0;
-        }
+        .hab-card { background: rgba(0,0,0,0.3); border: 1px solid #333; padding: 20px; border-left: 5px solid var(--primary-purple); border-radius: 4px; margin-bottom: 15px; position: relative; }
+        .hab-desc-render { color: #aaa; font-size: 0.9rem; margin: 10px 0; white-space: pre-wrap; }
+        .hab-desc-render img { max-width: 100%; border-radius: 4px; margin-top: 10px; border: 1px solid #333; }
+        
+        .btn-roll { padding: 8px 15px; font-family: 'Cinzel'; cursor: pointer; border-radius: 4px; border: 1px solid; background: transparent; margin-right: 8px; margin-top: 8px; font-size: 0.85rem; transition: 0.2s; }
+        .btn-forge { background: var(--primary-purple); color: #fff; border: none; padding: 12px; width: 100%; font-family: 'Cinzel'; cursor: pointer; border-radius: 4px; margin-bottom: 20px; transition: 0.2s; }
 
-        /* POPUP LATERAL */
-        #dice-popup {
-            position: fixed; bottom: 20px; right: -400px;
-            width: 320px; background: var(--panel-bg); border: 2px solid var(--text-gold);
-            padding: 25px; z-index: 9999; text-align: center;
+        /* POPUP ORNAMENTADO REDUZIDO */
+        #central-popup {
+            position: fixed; bottom: 20px; right: 20px; width: 320px; 
+            background: #0c0c12; border: 2px solid var(--text-gold); 
+            padding: 15px; z-index: 9999; text-align: center; font-family: 'Cinzel', serif;
             box-shadow: 0 0 30px rgba(0,0,0,0.9);
-            transition: right 0.4s cubic-bezier(0.1, 0.7, 0.1, 1);
+            opacity: 0; pointer-events: none;
+            transform: translateX(120%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
         }
-        #dice-popup.active { right: 20px; }
-        .popup-header { font-family: 'Cinzel'; color: var(--light-purple); border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; text-transform: uppercase; }
-        .popup-result-label { font-family: 'Cinzel'; font-size: 2rem; margin: 10px 0; }
-        .popup-total { font-family: 'Cinzel'; font-size: 2.8rem; color: var(--text-gold); margin-top: 5px; }
+        #central-popup.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+        .ornament { position: absolute; width: 30px; height: 30px; border: 1px solid var(--text-gold); }
+        .tl { top: -5px; left: -5px; border-right: none; border-bottom: none; }
+        .tr { top: -5px; right: -5px; border-left: none; border-bottom: none; }
+        .bl { bottom: -5px; left: -5px; border-right: none; border-top: none; }
+        .br { bottom: -5px; right: -5px; border-left: none; border-top: none; }
+        .pop-close-btn { position: absolute; right: 8px; top: 5px; color: var(--text-gold); cursor: pointer; font-size: 0.8rem; }
 
-        #save-btn { display: block; margin: 40px auto; background: transparent; border: 1px solid var(--text-gold); color: var(--text-gold); padding: 12px 60px; font-family: 'Cinzel'; cursor: pointer; transition: 0.3s; }
-        #save-btn:hover { background: var(--text-gold); color: #000; box-shadow: 0 0 20px rgba(197, 160, 89, 0.4); }
+        /* EDITOR DE TEXTO */
+        .editor-toolbar { display: flex; gap: 5px; margin-bottom: 10px; background: #111; padding: 5px; border-radius: 4px; }
+        .toolbar-btn { background: #222; border: 1px solid #444; color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.8rem; }
+        .toolbar-btn:hover { background: var(--primary-purple); }
+        .modal-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #333; }
+        .tab-btn { background: none; border: none; color: #666; padding: 10px; cursor: pointer; font-family: 'Cinzel'; }
+        .tab-btn.active { color: var(--text-gold); border-bottom: 2px solid var(--text-gold); }
+
+        .pop-total-text { font-size: 2.8rem; color: var(--text-gold); margin: 0; }
+        .pop-status-text { font-size: 1.3rem; margin: 5px 0; font-weight: bold; }
+        .pop-detail-text { font-family: 'Quicksand'; font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
+
+        /* MODAIS */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 650px; max-height: 90vh; overflow-y: auto; background: #0a0a0c; border: 2px solid var(--text-gold); padding: 30px; z-index: 10000; border-radius: 8px; }
+        .modal-input { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 12px; margin-bottom: 15px; border-radius: 4px; font-family: 'Quicksand'; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 class="title">Abyss System</h1>
+<div class="sidebar">
+    <button class="sidebar-btn active" id="btn-ficha" onclick="mudarArea('ficha')">📜</button>
+    <button class="sidebar-btn" id="btn-combate" onclick="mudarArea('combate')">⚔️</button>
+    <button class="sidebar-btn" onclick="salvarFicha()">💾</button>
+</div>
 
+<div class="container">
+    <div style="text-align: right; margin-bottom: -20px;">
+        <input type="text" id="user-nickname" placeholder="Nickname" style="background: transparent; border: none; border-bottom: 1px solid var(--border-color); color: var(--text-gold); text-align: right; outline: none; font-family: 'Cinzel';">
+    </div>
+    <h1 class="title">Abyss RPG</h1>
+
+    <div id="area-ficha" class="page-area active">
         <section class="section-box">
             <div class="section-title">Atributos</div>
             <div id="attr-container" class="attributes-grid"></div>
         </section>
 
         <div class="difficulty-selector">
-            <button class="diff-btn" id="btn-facil" onclick="definirDificuldade('facil')">Fácil</button>
-            <button class="diff-btn active" id="btn-normal" onclick="definirDificuldade('normal')">Normal</button>
-            <button class="diff-btn" id="btn-dificil" onclick="definirDificuldade('dificil')">Difícil</button>
+            <button class="diff-btn" id="df-facil" onclick="setDif('facil')">FÁCIL</button>
+            <button class="diff-btn active" id="df-normal" onclick="setDif('normal')">NORMAL</button>
+            <button class="diff-btn" id="df-dificil" onclick="setDif('dificil')">DIFÍCIL</button>
         </div>
 
         <section class="section-box">
             <div class="section-title">Perícias</div>
             <div id="skills-container" class="skills-list"></div>
         </section>
-
-        <button id="save-btn" onclick="salvarFicha()">Sincronizar com o Abismo</button>
     </div>
 
-    <div id="dice-popup">
-        <div id="popup-content"></div>
+    <div id="area-combate" class="page-area">
+        <div class="abilities-columns">
+            <section class="section-box">
+                <div class="section-title">Ataques</div>
+                <button class="btn-forge" onclick="abrirEditorHab('ataque')">+ Forjar Novo Ataque</button>
+                <div id="ataques-lista"></div>
+            </section>
+            <section class="section-box">
+                <div class="section-title">Habilidades</div>
+                <button class="btn-forge" onclick="abrirEditorHab('habilidade')">+ Forjar Nova Habilidade</button>
+                <div id="habilidades-lista"></div>
+            </section>
+        </div>
+        <section class="section-box spell-section">
+            <div class="section-title">Feitiços</div>
+            <button class="btn-forge" onclick="abrirEditorHab('feitico')">+ Forjar Novo Feitiço</button>
+            <div id="feiticos-lista" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+        </section>
+    </div>
+</div>
+
+<div id="central-popup">
+    <div class="ornament tl"></div><div class="ornament tr"></div>
+    <div class="ornament bl"></div><div class="ornament br"></div>
+    <span class="pop-close-btn" onclick="fecharPopup()">✕</span>
+    <div id="pop-content"></div>
+</div>
+
+<div id="modal-hab" class="modal">
+    <div class="modal-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-info')">Informações</button>
+        <button class="tab-btn" onclick="switchTab('tab-media')">Mídia/Imagem</button>
     </div>
 
-    <script>
-        const characterData = {
-            atributos: { "FOR": 1, "AGI": 1, "INT": 1, "CON": 1, "POD": 1 },
-            pericias: [
-                { n: "Acrobacia", a: "AGI", t: 0, m: 0 }, { n: "Adestramento", a: "INT", t: 0, m: 0 },
-                { n: "Artes", a: "POD", t: 0, m: 0 }, { n: "Alquimia", a: "INT", t: 0, m: 0 },
-                { n: "Arcanismo", a: "POD", t: 0, m: 0 }, { n: "Atletismo", a: "FOR", t: 0, m: 0 },
-                { n: "Atualidades", a: "INT", t: 0, m: 0 }, { n: "Ciências", a: "INT", t: 0, m: 0 },
-                { n: "Crime", a: "AGI", t: 0, m: 0 }, { n: "Diplomacia", a: "POD", t: 0, m: 0 },
-                { n: "Enganação", a: "POD", t: 0, m: 0 }, { n: "Fortitude", a: "CON", t: 0, m: 0 },
-                { n: "Furtividade", a: "AGI", t: 0, m: 0 }, { n: "Iniciativa", a: "AGI", t: 0, m: 0 },
-                { n: "Intimidação", a: "POD", t: 0, m: 0 }, { n: "Intuição", a: "POD", t: 0, m: 0 },
-                { n: "Investigação", a: "INT", t: 0, m: 0 }, { n: "Linguística", a: "POD", t: 0, m: 0 },
-                { n: "Luta", a: "FOR", t: 0, m: 0 }, { n: "Medicina", a: "INT", t: 0, m: 0 },
-                { n: "Monstrologia", a: "INT", t: 0, m: 0 }, { n: "Percepção", a: "POD", t: 0, m: 0 },
-                { n: "Pilotagem", a: "AGI", t: 0, m: 0 }, { n: "Pontaria", a: "AGI", t: 0, m: 0 },
-                { n: "Profissão", a: "INT", t: 0, m: 0 }, { n: "Reflexos", a: "AGI", t: 0, m: 0 },
-                { n: "Religião", a: "POD", t: 0, m: 0 }, { n: "Sobrevivência", a: "INT", t: 0, m: 0 },
-                { n: "Tática", a: "INT", t: 0, m: 0 }, { n: "Tecnologia", a: "INT", t: 0, m: 0 },
-                { n: "Vontade", a: "POD", t: 0, m: 0 }
-            ]
-        };
+    <div id="tab-info">
+        <input type="hidden" id="hab-tipo">
+        <label style="color:var(--text-gold); font-size:0.8rem">NOME DA HABILIDADE</label>
+        <input type="text" id="hab-nome" class="modal-input">
+        
+        <label style="color:var(--text-gold); font-size:0.8rem">DANO / ROLAGEM PRINCIPAL</label>
+        <input type="text" id="hab-dano" class="modal-input" placeholder="Ex: 2d10 + 5">
 
-        let dif = 'normal';
-        const thresholds = { facil: 9, normal: 12, dificil: 15 };
+        <div class="editor-toolbar">
+            <button class="toolbar-btn" onclick="formatText('**')"><b>B</b></button>
+            <button class="toolbar-btn" onclick="formatText('*')"><i>I</i></button>
+            <button class="toolbar-btn" onclick="formatText('<u>', '</u>')"><u>U</u></button>
+            <button class="toolbar-btn" onclick="formatText('~~')"><s>S</s></button>
+        </div>
+        <textarea id="hab-desc" class="modal-input" rows="6" placeholder="Descrição da habilidade..."></textarea>
+        
+        <div id="rolagens-extras-container"></div>
+        <button onclick="addInputRolagem()" style="background:none; border:1px solid var(--primary-purple); color:var(--light-purple); cursor:pointer; padding:5px; margin-bottom:15px; width:100%">+ Adicionar Rolagem Opcional</button>
+    </div>
 
-        function renderAll() {
-            document.getElementById('attr-container').innerHTML = Object.entries(characterData.atributos).map(([k, v]) => `
-                <div class="attr-container-outer">
-                    <div class="attr-hexagon-border"><div class="attr-hexagon-inner">
-                        <input class="attr-value-input" type="number" value="${v}" onchange="characterData.atributos['${k}']=parseInt(this.value)||0">
-                        <span class="attr-name">${k}</span>
-                        <div class="d20-emoji-attr" onclick="rolar('${k}', characterData.atributos['${k}'], 0, true)">🎲</div>
-                    </div></div>
+    <div id="tab-media" style="display:none">
+        <label style="color:var(--text-gold); font-size:0.8rem">LINK DA IMAGEM / ÍCONE</label>
+        <input type="text" id="hab-img" class="modal-input" placeholder="https://link-da-imagem.png">
+        <p style="font-size:0.7rem; color:#666">A imagem aparecerá ao final da descrição.</p>
+    </div>
+
+    <button onclick="salvarHabilidade()" style="width:100%; padding:15px; background:var(--primary-purple); color:#fff; border:none; font-family:Cinzel; cursor:pointer;">GRAVAR NO GRIMÓRIO</button>
+    <button onclick="document.getElementById('modal-hab').style.display='none'" style="width:100%; margin-top:10px; background:none; border:1px solid #333; color:#eee; padding:10px; cursor:pointer;">Cancelar</button>
+</div>
+
+<script>
+    let sheet = {
+        atributos: {"FOR":1, "AGI":1, "INT":1, "CON":1, "POD":1},
+        pericias: [],
+        habilidades: [],
+        dificuldade: 'normal'
+    };
+
+    const dtTabela = {
+        facil: { falha: 9, sucesso: 10, bom: 20, extremo: 21 },
+        normal: { falha: 12, sucesso: 13, bom: 20, extremo: 21 },
+        dificil: { falha: 15, sucesso: 16, bom: 20, extremo: 21 }
+    };
+
+    const periciasDados = [
+        { n: "Acrobacia", a: "AGI" }, { n: "Adestramento", a: "INT" }, { n: "Artes", a: "POD" },
+        { n: "Alquimia", a: "INT" }, { n: "Arcanismo", a: "POD" }, { n: "Atletismo", a: "FOR" },
+        { n: "Atualidades", a: "INT" }, { n: "Ciências", a: "INT" }, { n: "Crime", a: "AGI" },
+        { n: "Diplomacia", a: "POD" }, { n: "Enganação", a: "POD" }, { n: "Fortitude", a: "CON" },
+        { n: "Furtividade", a: "AGI" }, { n: "Iniciativa", a: "AGI" }, { n: "Intimidação", a: "POD" },
+        { n: "Intuição", a: "POD" }, { n: "Investigação", a: "INT" }, { n: "Linguística", a: "POD" },
+        { n: "Luta", a: "FOR" }, { n: "Medicina", a: "INT" }, { n: "Monstrologia", a: "INT" },
+        { n: "Percepção", a: "POD" }, { n: "Pilotagem", a: "AGI" }, { n: "Pontaria", a: "AGI" },
+        { n: "Profissão", a: "INT" }, { n: "Reflexos", a: "AGI" }, { n: "Religião", a: "POD" },
+        { n: "Sobrevivência", a: "INT" }, { n: "Tática", a: "INT" }, { n: "Tecnologia", a: "INT" },
+        { n: "Vontade", a: "POD" }
+    ];
+
+    function getNivelSucesso(dado, total) {
+        const dts = dtTabela[sheet.dificuldade];
+        if (dado === 1) return { txt: "FALHA CRÍTICA", cor: "#8b0000" };
+        if (dado === 20 || total >= 21) return { txt: "SUCESSO EXTREMO", cor: "#00ff88" };
+        if (total === 20) return { txt: "SUCESSO BOM", cor: "#7fffd4" }; // Verde-água
+        if (total >= dts.sucesso) return { txt: "SUCESSO NORMAL", cor: "#4488ff" };
+        return { txt: "FALHA", cor: "#ff4444" };
+    }
+
+    function spawnPopup(titulo, subtitulo, total, corStatus, txtStatus, detalhes = "") {
+        document.getElementById('pop-content').innerHTML = `
+            <div style="font-size: 0.9rem; color: #a385cc; letter-spacing: 1px;">${titulo}</div>
+            <div style="height:1px; background:linear-gradient(90deg, transparent, var(--text-gold), transparent); margin: 8px 0;"></div>
+            <div class="pop-detail-text">${subtitulo}</div>
+            <div class="pop-status-text" style="color:${corStatus}">${txtStatus}</div>
+            <div class="pop-total-text">${total}</div>
+            <div style="font-size:0.75rem; color:#666; margin-top:3px;">${detalhes}</div>`;
+        
+        const pop = document.getElementById('central-popup');
+        pop.classList.add('active');
+        clearTimeout(window.popTimer);
+        window.popTimer = setTimeout(fecharPopup, 6000);
+    }
+
+    function realizarRolagem(attrNome, bonusManual, nomeDisplay, isPericia = false, periciaNome = "") {
+        let attrValor = sheet.atributos[attrNome];
+        let bonusTotal = bonusManual;
+
+        if(isPericia) {
+            let p = sheet.pericias.find(x => x.n === periciaNome);
+            if(p) bonusTotal = parseInt(p.t) + parseInt(p.m);
+        }
+
+        let rolagens = [];
+        let final;
+        if(attrValor <= 0) {
+            rolagens = [Math.floor(Math.random()*20)+1, Math.floor(Math.random()*20)+1];
+            final = Math.min(...rolagens);
+        } else {
+            for(let i=0; i<attrValor; i++) rolagens.push(Math.floor(Math.random()*20)+1);
+            final = Math.max(...rolagens);
+        }
+        
+        const total = final + bonusTotal;
+        const res = getNivelSucesso(final, total);
+        spawnPopup(nomeDisplay.toUpperCase(), `Dados: [${rolagens.join(', ')}]`, total, res.cor, res.txt, `Soma: ${final} + ${bonusTotal}`);
+    }
+
+    function rolarDados(formula) {
+        try {
+            const clean = formula.toLowerCase().replace(/\s/g, '');
+            const parts = clean.split(/([+-])/);
+            let total = 0;
+            parts.forEach((p, i) => {
+                if (p === '+' || p === '-') return;
+                let val = 0;
+                if (p.includes('d')) {
+                    const [qtdStr, facesStr] = p.split('d');
+                    let qtd = parseInt(qtdStr);
+                    if (isNaN(qtd)) qtd = 1;
+                    let faces = parseInt(facesStr);
+                    for(let j=0; j<qtd; j++) val += Math.floor(Math.random()*faces)+1;
+                } else { val = parseInt(p) || 0; }
+                const op = parts[i-1] === '-' ? -1 : 1;
+                total += (val * op);
+            });
+            return total;
+        } catch(e) { return 0; }
+    }
+
+    function formatText(tagStart, tagEnd = tagStart) {
+        const area = document.getElementById('hab-desc');
+        const start = area.selectionStart;
+        const end = area.selectionEnd;
+        const text = area.value;
+        area.value = text.substring(0, start) + tagStart + text.substring(start, end) + tagEnd + text.substring(end);
+    }
+
+    function renderMarkdown(t) {
+        return t.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/~~(.*?)~~/g, '<s>$1</s>')
+                .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
+    }
+
+    function render() {
+        document.getElementById('attr-container').innerHTML = Object.entries(sheet.atributos).map(([k,v]) => `
+            <div class="attr-container-outer" onclick="realizarRolagem('${k}', 0, 'Teste de ${k}')">
+                <div class="attr-hexagon-border"><div class="attr-hexagon-inner">
+                    <input type="number" class="attr-value-input" value="${v}" onchange="sheet.atributos['${k}']=parseInt(this.value)||0" onclick="event.stopPropagation()">
+                    <span style="font-size:0.75rem; color:var(--text-gold); font-weight:bold;">${k}</span>
+                </div></div>
+            </div>`).join('');
+
+        document.getElementById('skills-container').innerHTML = sheet.pericias.map(p => `
+            <div class="skill-item" onclick="realizarRolagem('${p.a}', 0, '${p.n}', true, '${p.n}')">
+                <div><span class="skill-name">${p.n}</span><br><small style="color:#666">${p.a}</small></div>
+                <div style="display:flex; gap:5px" onclick="event.stopPropagation()">
+                    <select onchange="atualizarPericia('${p.n}', 't', this.value)" style="background:#000; color:var(--light-purple); border:1px solid #444;">
+                        <option value="0" ${p.t==0?'selected':''}>+0</option>
+                        <option value="2" ${p.t==2?'selected':''}>+2</option>
+                        <option value="4" ${p.t==4?'selected':''}>+4</option>
+                    </select>
+                    <input type="number" value="${p.m}" onchange="atualizarPericia('${p.n}', 'm', this.value)" style="width:35px; background:#000; color:var(--text-gold); border:1px solid #444; text-align:center;">
                 </div>
-            `).join('');
+            </div>`).join('');
+        renderAbilities();
+    }
 
-            document.getElementById('skills-container').innerHTML = characterData.pericias.map((s, i) => `
-                <div class="skill-item" onclick="prepararRolagem(${i})">
-                    <div class="skill-info">
-                        <div style="font-weight:bold">${s.n}</div>
-                        <div class="skill-attr">${s.a}</div>
-                    </div>
-                    <div class="skill-controls" onclick="event.stopPropagation()">
-                        <select class="skill-select" id="treino-${i}" onchange="characterData.pericias[${i}].t=parseInt(this.value)">
-                            <option value="0" ${s.t==0?'selected':''}>+0</option>
-                            <option value="2" ${s.t==2?'selected':''}>+2</option>
-                            <option value="4" ${s.t==4?'selected':''}>+4</option>
-                        </select>
-                        <input type="number" class="skill-mod-input" id="mod-${i}" value="${s.m}" 
-                            onchange="characterData.pericias[${i}].m=parseInt(this.value)||0">
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function prepararRolagem(index) {
-            const s = characterData.pericias[index];
-            const atributoValor = characterData.atributos[s.a];
-            const treino = parseInt(document.getElementById(`treino-${index}`).value);
-            const modExtra = parseInt(document.getElementById(`mod-${index}`).value) || 0;
-            rolar(s.n, atributoValor, treino + modExtra);
-        }
-
-        function definirDificuldade(n) {
-            dif = n;
-            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + n).classList.add('active');
-        }
-
-        function rolar(label, qtdAtributo, totalMod, isPuro = false) {
-            let dados = [];
-            let qtdEfetiva = qtdAtributo <= 0 ? 2 : qtdAtributo;
-            for (let i = 0; i < qtdEfetiva; i++) dados.push(Math.floor(Math.random() * 20) + 1);
-
-            let dadoBase = (qtdAtributo <= 0) ? Math.min(...dados) : Math.max(...dados);
-            let totalFinal = dadoBase + totalMod;
-            let status = "";
-            let cor = "";
-
-            if (dadoBase === 1) { status = "FALHA CRÍTICA"; cor = "var(--crit-fail)"; }
-            else if (dadoBase === 20) { status = "SUCESSO EXTREMO"; cor = "var(--crit-success)"; }
-            else if (dadoBase <= thresholds[dif]) { status = "FALHA"; cor = "var(--fail)"; }
-            else {
-                if (totalFinal >= 20) { status = "SUCESSO BOM"; cor = "var(--good-success)"; }
-                else { status = "SUCESSO"; cor = "var(--success)"; }
-            }
-
-            const html = `
-                <div class="popup-header">${label}</div>
-                <div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 5px;">DIFICULDADE: ${dif.toUpperCase()}</div>
-                <div style="margin-bottom: 5px">Dados: [${dados.join(', ')}]</div>
-                <div class="popup-result-label" style="color: ${cor}">${status}</div>
-                <div style="font-size: 0.9rem">Dado: ${dadoBase} ${totalMod !== 0 ? `+ Mod: ${totalMod}` : ''}</div>
-                <div class="popup-total">TOTAL: ${totalFinal}</div>
+    function renderAbilities() {
+        const listas = { ataque: 'ataques-lista', habilidade: 'habilidades-lista', feitico: 'feiticos-lista' };
+        Object.values(listas).forEach(id => document.getElementById(id).innerHTML = '');
+        sheet.habilidades.forEach((h, i) => {
+            const card = document.createElement('div');
+            card.className = 'hab-card';
+            card.innerHTML = `
+                <button onclick="removerHab(${i})" style="position:absolute; right:10px; top:10px; background:none; border:none; color:red; cursor:pointer;">✕</button>
+                <h3 style="font-family:Cinzel; color:var(--text-gold); margin:0;">${h.nome}</h3>
+                <div class="hab-desc-render">${renderMarkdown(h.desc)}</div>
+                ${h.img ? `<img src="${h.img}" style="max-width:100%; display:block; margin:10px 0; border-radius:4px;">` : ''}
+                ${h.dano ? `<button class="btn-roll" style="color:#ff4444; border-color:#ff4444;" onclick="spawnPopup('${h.nome}', 'Rolagem Principal', rolarDados('${h.dano}'), 'var(--text-gold)', 'DANO')">⚔️ ${h.dano}</button>` : ''}
+                ${h.extras.map(ex => `<button class="btn-roll" style="color:var(--light-purple); border-color:var(--light-purple);" onclick="spawnPopup('${h.nome}', 'Rolagem Extra', rolarDados('${ex}'), 'var(--light-purple)', 'BÔNUS')">🎲 ${ex}</button>`).join('')}
             `;
+            document.getElementById(listas[h.tipo]).appendChild(card);
+        });
+    }
 
-            const p = document.getElementById('dice-popup');
-            document.getElementById('popup-content').innerHTML = html;
-            p.classList.add('active');
-            
-            clearTimeout(window.rollTimeout);
-            window.rollTimeout = setTimeout(() => p.classList.remove('active'), 6000);
-        }
+    function switchTab(id) {
+        document.getElementById('tab-info').style.display = id === 'tab-info' ? 'block' : 'none';
+        document.getElementById('tab-media').style.display = id === 'tab-media' ? 'block' : 'none';
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('onclick').includes(id)));
+    }
 
-        function salvarFicha() { localStorage.setItem('ficha_abyss_vFinal', JSON.stringify(characterData)); alert("Sincronizado!"); }
+    function abrirEditorHab(t) { 
+        document.getElementById('hab-tipo').value = t; 
+        document.getElementById('modal-hab').style.display='block'; 
+        switchTab('tab-info');
+    }
 
-        window.onload = () => {
-            const s = localStorage.getItem('ficha_abyss_vFinal');
-            if(s) {
-                const data = JSON.parse(s);
-                characterData.atributos = data.atributos;
-                characterData.pericias = data.pericias;
-            }
-            renderAll();
+    function addInputRolagem() {
+        const div = document.createElement('div');
+        div.innerHTML = `<input type="text" class="modal-input extra-roll" placeholder="Outra rolagem (ex: 1d4)">`;
+        document.getElementById('rolagens-extras-container').appendChild(div);
+    }
+
+    function salvarHabilidade() {
+        const h = {
+            tipo: document.getElementById('hab-tipo').value,
+            nome: document.getElementById('hab-nome').value,
+            dano: document.getElementById('hab-dano').value,
+            desc: document.getElementById('hab-desc').value,
+            img: document.getElementById('hab-img').value,
+            extras: Array.from(document.querySelectorAll('.extra-roll')).map(i => i.value).filter(v => v)
         };
-    </script>
+        sheet.habilidades.push(h);
+        renderAbilities();
+        document.getElementById('modal-hab').style.display='none';
+    }
+
+    function removerHab(i) { sheet.habilidades.splice(i, 1); renderAbilities(); }
+    function fecharPopup() { document.getElementById('central-popup').classList.remove('active'); }
+    function setDif(v) { sheet.dificuldade = v; document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active')); document.getElementById('df-'+v).classList.add('active'); }
+    function mudarArea(a) { 
+        document.querySelectorAll('.page-area').forEach(e => e.classList.remove('active'));
+        document.getElementById('area-'+a).classList.add('active');
+        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-'+a).classList.add('active');
+    }
+    function atualizarPericia(n, c, v) { let p = sheet.pericias.find(x => x.n === n); if(p) p[c] = parseInt(v) || 0; }
+    function salvarFicha() {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(sheet)], {type: 'application/json'}));
+        a.download = 'ficha_abyss.json'; a.click();
+    }
+
+    window.onload = () => { sheet.pericias = periciasDados.map(p => ({ ...p, t: 0, m: 0 })); render(); };
+</script>
 </body>
 </html>
