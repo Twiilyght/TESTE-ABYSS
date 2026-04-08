@@ -3,56 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de RPG - Sistema Único</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <title>Ficha RPG - Sistema de Luxo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --panel-bg: #15151a;
+            --primary-purple: #6a1b9a;
+            --light-purple: #9c4dcc;
+            --text-gold: #c5a059;
+            --text-light: #e0e0e0;
+            --text-dim: #666; 
+            --border-color: #3e2723;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Quicksand', sans-serif;
+            margin: 0; padding: 20px;
+            background-image: radial-gradient(circle, #1a0a2e 0%, #0a0a0c 100%);
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        .title { font-family: 'Cinzel', serif; text-align: center; color: var(--primary-purple); text-shadow: 0 0 10px rgba(156, 77, 204, 0.5); text-transform: uppercase; }
+
+        .section-box {
+            background: var(--panel-bg); border: 2px solid var(--border-color);
+            border-radius: 8px; margin-bottom: 30px; padding: 25px 20px 20px 20px; position: relative;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif; position: absolute; top: -12px; left: 20px;
+            background: var(--bg-dark); padding: 0 10px; color: var(--text-gold); font-weight: bold;
+        }
+
+        /* --- ATRIBUTOS --- */
+        .attributes-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
+        .attr-card {
+            width: 100px; height: 115px; background: var(--panel-bg);
+            border: 2px solid var(--primary-purple);
+            clip-path: polygon(50% 0%, 90% 25%, 90% 75%, 50% 100%, 10% 75%, 10% 25%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 0.3s ease; filter: drop-shadow(0 0 5px rgba(156, 77, 204, 0.6));
+        }
+        .attr-card:hover { transform: translateY(-8px) scale(1.05); border-color: var(--light-purple); filter: drop-shadow(0 0 15px rgba(156, 77, 204, 0.9)); }
+        .attr-value-input { background: transparent; border: none; color: white; font-family: 'Cinzel', serif; font-size: 2rem; width: 50px; text-align: center; outline: none; }
+        .attr-name { font-size: 0.75rem; color: var(--light-purple); font-weight: bold; }
+
+        /* --- PERÍCIAS (FORÇANDO A LEVITAÇÃO A QUALQUER CUSTO) --- */
+        .skills-list { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 15px; 
+            padding-top: 10px;
+        }
+
+        /* Seletor ultra-forte para garantir que o navegador aplique */
+        div.skill-item {
+            background: #000 !important;
+            border: 1px solid var(--primary-purple) !important;
+            border-radius: 4px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            /* Prepara o navegador para o movimento */
+            transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out !important;
+            will-change: transform; 
+        }
+
+        /* Efeito de subir 6 pixels e brilhar */
+        div.skill-item:hover {
+            transform: translateY(-6px) !important;
+            border-color: var(--light-purple) !important;
+            box-shadow: 0 10px 20px rgba(156, 77, 204, 0.5) !important;
+            z-index: 10;
+            background: #0a0a0f !important;
+        }
+
+        .skill-info { flex-grow: 1; display: flex; align-items: center; pointer-events: none; }
+        .skill-name { font-size: 0.9rem; font-weight: bold; color: #fff; }
+        .skill-attr-tag { font-size: 0.7rem; color: var(--text-dim); margin-left: 10px; text-transform: uppercase; }
+
+        /* INPUTS INTERNOS */
+        .skill-training-select { 
+            background: #111; color: var(--light-purple); border: 1px solid var(--primary-purple);
+            font-size: 0.75rem; padding: 2px 15px 2px 5px; appearance: none; position: relative; z-index: 11;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239c4dcc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 4px center;
+        }
+        .skill-bonus-input { width: 30px; background: #111; color: #fff; border: 1px solid var(--primary-purple); text-align: center; margin-left: 5px; position: relative; z-index: 11; }
+
+        /* D20 E BOTÃO */
+        .d20-icon { width: 20px; height: 20px; background: var(--primary-purple); clip-path: polygon(50% 0%, 90% 20%, 100% 50%, 90% 80%, 50% 100%, 10% 80%, 0% 50%, 10% 20%); cursor: pointer; transition: 0.2s; }
+        .d20-icon:hover { transform: scale(1.2) rotate(15deg); background: var(--light-purple); }
+
+        #save-btn {
+            display: block; margin: 40px auto; background: #15151a; border: 1px solid var(--text-gold);
+            color: var(--text-gold); padding: 12px 50px; font-family: 'Cinzel', serif; cursor: pointer;
+            border-radius: 6px; transition: all 0.3s; font-size: 1.1rem;
+        }
+        #save-btn:hover { transform: translateY(-5px); background: var(--text-gold); color: #000; box-shadow: 0 0 25px rgba(197, 160, 89, 0.6); }
+
+        #dice-popup { position: fixed; bottom: 20px; right: 20px; width: 260px; background: var(--panel-bg); border: 2px solid var(--text-gold); padding: 15px; display: none; border-radius: 8px; box-shadow: 0 0 30px #000; z-index: 1000; }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <header>
-            <h1 class="title">PERSONAGEM</h1>
-        </header>
+        <h1 class="title">Ficha de RPG</h1>
 
-        <div class="difficulty-selector">
-            <button class="diff-btn facil" data-nivel="facil" onclick="definirDificuldade('facil')">FÁCIL</button>
-            <button class="diff-btn normal active" data-nivel="normal" onclick="definirDificuldade('normal')">NORMAL</button>
-            <button class="diff-btn dificil" data-nivel="dificil" onclick="definirDificuldade('dificil')">DIFÍCIL</button>
-        </div>
-        
-        <section id="attributes" class="section-box">
+        <section class="section-box">
             <div class="section-title">Atributos</div>
-            <div class="attributes-grid" id="attr-container">
-                </div>
+            <div id="attr-container" class="attributes-grid"></div>
         </section>
-        
-        <section id="skills" class="section-box">
+
+        <section class="section-box">
             <div class="section-title">Perícias</div>
-            <div class="skills-list" id="skills-container">
-                </div>
+            <div id="skills-container" class="skills-list"></div>
         </section>
-    </div>
 
-<section id="habilidades" class="section-box">
-    <div class="section-title">Habilidades</div>
-    <div id="habilidades-container">
-        </div>
-    <button class="add-hab-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
-</section>
-
-<div class="save-control">
-
-    <div class="save-control">
-            <button id="save-btn" onclick="salvarFicha()">SALVAR FICHA</button>
-            <div id="save-feedback" style="display: none;">Ficha salva com sucesso!</div>
-        </div>
+        <button id="save-btn" onclick="salvarFicha()">SALVAR FICHA</button>
     </div>
 
     <div id="dice-popup">
-    <span class="popup-close" onclick="this.parentElement.style.display='none'">X</span>
-    <div id="popup-content"></div>
-</div>
+        <span onclick="this.parentElement.style.display='none'" style="float:right; cursor:pointer; color: var(--text-gold)">✖</span>
+        <div id="popup-content"></div>
+    </div>
 
-    <script src="ui.js"></script>
-    <script src="app.js"></script>
+    <script>
+        const MASTER_SKILLS = [
+            { nome: "Acrobacia", attr: "AGI" }, { nome: "Atletismo", attr: "FOR" },
+            { nome: "Atualidades", attr: "INT" }, { nome: "Ciências", attr: "INT" },
+            { nome: "Crime", attr: "AGI" }, { nome: "Diplomacia", attr: "POD" },
+            { nome: "Enganação", attr: "POD" }, { nome: "Fortitude", attr: "CON" },
+            { nome: "Furtividade", attr: "AGI" }, { nome: "Iniciativa", attr: "AGI" },
+            { nome: "Intimidação", attr: "POD" }, { nome: "Intuição", attr: "POD" },
+            { nome: "Investigação", attr: "INT" }, { nome: "Luta", attr: "FOR" },
+            { nome: "Medicina", attr: "INT" }, { nome: "Percepção", attr: "POD" },
+            { nome: "Pontaria", attr: "AGI" }, { nome: "Reflexos", attr: "AGI" },
+            { nome: "Vontade", attr: "POD" }
+        ];
+
+        let characterData = {
+            atributos: { "FOR": 1, "AGI": 1, "INT": 1, "CON": 1, "POD": 1 },
+            pericias: MASTER_SKILLS.map(s => ({...s, treino: 0, bonus: 0}))
+        };
+
+        function renderAll() {
+            const attrCont = document.getElementById('attr-container');
+            attrCont.innerHTML = Object.entries(characterData.atributos).map(([name, val]) => `
+                <div class="attr-card">
+                    <input class="attr-value-input" type="number" value="${val}" onchange="characterData.atributos['${name}']=parseInt(this.value)">
+                    <span class="attr-name">${name}</span>
+                    <div class="d20-icon" onclick="rolarDadoPuro('${name}')"></div>
+                </div>
+            `).join('');
+
+            const skillCont = document.getElementById('skills-container');
+            skillCont.innerHTML = characterData.pericias.map((s, i) => `
+                <div class="skill-item">
+                    <div class="skill-info" onclick="rolarPericia(${i})">
+                        <span class="skill-name">${s.nome}</span>
+                        <span class="skill-attr-tag">(${s.attr})</span>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <select class="skill-training-select" onchange="characterData.pericias[${i}].treino=parseInt(this.value)">
+                            <option value="0" ${s.treino==0?'selected':''}>+0</option>
+                            <option value="2" ${s.treino==2?'selected':''}>+2</option>
+                            <option value="4" ${s.treino==4?'selected':''}>+4</option>
+                        </select>
+                        <input type="number" class="skill-bonus-input" value="${s.bonus}" onchange="characterData.pericias[${i}].bonus=parseInt(this.value)">
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function rolarDadoPuro(a) { executarRolagem("Teste de " + a, characterData.atributos[a], 0); }
+        function rolarPericia(i) {
+            const s = characterData.pericias[i];
+            executarRolagem(s.nome, characterData.atributos[s.attr], (s.treino + s.bonus));
+        }
+
+        function executarRolagem(label, qtd, mod) {
+            let dados = [];
+            for(let i=0; i<(qtd||1); i++) dados.push(Math.floor(Math.random()*20)+1);
+            let result = Math.max(...dados) + mod;
+            document.getElementById('popup-content').innerHTML = `
+                <h4 style="color:#9c4dcc; margin:0">${label}</h4>
+                <h2 style="color:#fff; font-size: 2.5rem; margin: 10px 0;">${result}</h2>
+                <small style="color:#aaa">Dados: [${dados.join(', ')}] | Bônus: ${mod}</small>
+            `;
+            document.getElementById('dice-popup').style.display = 'block';
+        }
+
+        function salvarFicha() {
+            localStorage.setItem('ficha_save_v2', JSON.stringify(characterData));
+            alert("Ficha Salva com Sucesso!");
+        }
+
+        window.onload = () => {
+            const salvo = localStorage.getItem('ficha_save_v2');
+            if(salvo) characterData = JSON.parse(salvo);
+            renderAll();
+        };
+    </script>
 </body>
 </html>
