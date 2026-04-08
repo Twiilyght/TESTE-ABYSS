@@ -3,11 +3,15 @@ const UI = {
         const container = document.getElementById('attr-container');
         if (!container) return;
         container.innerHTML = Object.entries(attributes).map(([name, value]) => `
-              <div class="attr-card">
-    <input class="attr-value-input">
-    <span class="attr-name">${name}</span>
-    <button class="roll-attr-btn" onclick="rolarDadoPuro('${name}')" title="Rolar teste puro">ROLAR</button>
-</div>
+            <div class="attr-card">
+                <div class="attr-number-hexagon">
+                    <input class="attr-value-input" type="number" value="${value}" 
+                           onchange="updateAttr('${name}', this.value)"
+                           step="1">
+                </div>
+                <span class="attr-name">${name}</span>
+                <div class="d20-icon" onclick="rolarDadoPuro('${name}')" title="Rolar Teste Puro"></div>
+            </div>
         `).join('');
     },
 
@@ -20,27 +24,26 @@ const UI = {
                     <strong class="skill-name">${skill.nome}</strong>
                     <span class="skill-attr-tag">${skill.attr}</span>
                 </div>
-                <input type="number" class="skill-mod-input" value="${skill.mod}" 
-                       onchange="updateSkillMod(${index}, this.value)">
+                <select class="skill-training-select" onchange="updateSkillTraining(${index}, this.value)">
+                    <option value="0" ${skill.treino == 0 ? 'selected' : ''}>+0</option>
+                    <option value="2" ${skill.treino == 2 ? 'selected' : ''}>+2</option>
+                    <option value="4" ${skill.treino == 4 ? 'selected' : ''}>+4</option>
+                </select>
+                <input type="number" class="skill-bonus-input" value="${skill.bonus || 0}" 
+                       onchange="updateSkillBonus(${index}, this.value)"
+                       step="1" title="Bônus Manual">
             </div>
         `).join('');
     },
-    
+
     renderHabilidades(habilidades) {
         const container = document.getElementById('habilidades-container');
         if (!container) return;
-        
-        // Uso de (habilidades || []) evita erros caso a lista venha nula
         container.innerHTML = (habilidades || []).map((hab, index) => `
-            <div class="habilidade-item">
-                <div class="hab-header">
-                    <input type="text" class="hab-name-input" value="${hab.nome}" 
-                           oninput="updateHabilidade(${index}, 'nome', this.value)">
-                    <button class="remove-hab-btn" onclick="removerHabilidade(${index})" title="Remover Habilidade">✖</button>
-                </div>
-                <textarea class="hab-desc-input" 
-                          placeholder="Descreva o efeito da habilidade..."
-                          oninput="updateHabilidade(${index}, 'desc', this.value)">${hab.desc}</textarea>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid #3e2723; border-radius:4px; padding:10px; margin-bottom:10px">
+                <input type="text" value="${hab.nome}" style="background:transparent; border:none; border-bottom:1px solid #6a1b9a; color:#c5a059; font-family:'Cinzel'; width:80%" oninput="updateHabilidade(${index}, 'nome', this.value)">
+                <button onclick="removerHabilidade(${index})" style="background:none; border:none; color:red; cursor:pointer">✖</button>
+                <textarea style="background:rgba(0,0,0,0.2); border:1px solid #6a1b9a; color:white; width:100%; margin-top:5px; font-family:'Quicksand'; min-height:60px" oninput="updateHabilidade(${index}, 'desc', this.value)">${hab.desc}</textarea>
             </div>
         `).join('');
     },
@@ -48,13 +51,7 @@ const UI = {
     showPopup(title, content) {
         const popup = document.getElementById('dice-popup');
         const contentDiv = document.getElementById('popup-content');
-        
-        if (!popup || !contentDiv) return;
-
-        contentDiv.innerHTML = `
-            <span class="popup-title">${title}</span>
-            <div>${content}</div>
-        `;
+        contentDiv.innerHTML = `<h4 style="color:#9c4dcc; font-family:'Cinzel'; margin-top:0">${title}</h4>${content}`;
         popup.style.display = 'block';
     }
 };
