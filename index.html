@@ -166,29 +166,139 @@
         /* MODAIS */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 650px; max-height: 90vh; overflow-y: auto; background: #0a0a0c; border: 2px solid var(--text-gold); padding: 30px; z-index: 10000; border-radius: 8px; }
         .modal-input { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 12px; margin-bottom: 15px; border-radius: 4px; font-family: 'Quicksand'; }
+   /* --- ESTILO DAS BARRAS SUPERIORES --- */
+.header-status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 auto 30px auto;
+    max-width: 500px; /* Largura centralizada */
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--text-gold);
+    width: 25px;
+    font-weight: bold;
+}
+
+.status-bar-bg {
+    flex-grow: 1;
+    height: 4px; /* Barra fina conforme solicitado */
+    background: #000;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-fill {
+    height: 100%;
+    transition: width 0.3s ease-out;
+}
+
+/* Cores Solicitadas com Brilho Neon */
+.bg-red { background: #ff1744; box-shadow: 0 0 8px #ff1744; }
+.bg-gold { background: #ffca28; box-shadow: 0 0 8px #ffca28; }
+.bg-cyan { background: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
+
+.status-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-controls input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Quicksand';
+    font-size: 0.85rem;
+    width: 35px;
+    text-align: center;
+}
+
+.arrow-btn {
+    background: none;
+    border: none;
+    color: var(--primary-purple);
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: 0.2s;
+}
+
+.arrow-btn:hover { color: var(--light-purple); transform: scale(1.2); }
+.sep { color: #555; font-size: 0.8rem; }
+   
     </style>
 </head>
 <body>
 
-<div class="sidebar closed" id="main-sidebar">
-    <!-- Botão Hambúrguer -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-    </button>
-
-    <!-- Seus botões originais -->
+<div class="sidebar">
     <button class="sidebar-btn active" id="btn-ficha" onclick="mudarArea('ficha')">📜</button>
     <button class="sidebar-btn" id="btn-combate" onclick="mudarArea('combate')">⚔️</button>
-    <button class="sidebar-btn" onclick="salvarFicha()">💾</button>
+    <button class="sidebar-btn" onclick="salvarNoNavegador()">💾</button>
 </div>
 
 <div class="container">
     <div style="text-align: right; margin-bottom: -20px;">
+       <div class="container">
+    <div style="text-align: right; margin-bottom: 10px;">
         <input type="text" id="user-nickname" placeholder="Nickname" style="background: transparent; border: none; border-bottom: 1px solid var(--border-color); color: var(--text-gold); text-align: right; outline: none; font-family: 'Cinzel';">
     </div>
-    <h1 class="title">Abyss RPG</h1>
+    <h1 class="title" style="margin-bottom: 10px;">Abyss RPG</h1>
+
+    <!-- NOVAS BARRAS DE RECURSOS -->
+    <div class="header-status-container">
+        <!-- Vida (PV) -->
+        <div class="status-row">
+            <span class="status-label">[PV]</span>
+            <div class="status-bar-bg"><div id="bar-pv" class="status-fill bg-red" style="width: 100%;"></div></div>
+            <div class="status-controls">
+                <button class="arrow-btn" onclick="changeStat('pv', -1)">◀</button>
+                <input type="number" id="curr-pv" value="20" onchange="updateBar('pv')">
+                <span class="sep">/</span>
+                <input type="number" id="max-pv" value="20" onchange="updateBar('pv')">
+                <button class="arrow-btn" onclick="changeStat('pv', 1)">▶</button>
+            </div>
+        </div>
+
+        <!-- Arcanismo (PA) -->
+        <div class="status-row">
+            <span class="status-label">[PA]</span>
+            <div class="status-bar-bg"><div id="bar-pa" class="status-fill bg-gold" style="width: 100%;"></div></div>
+            <div class="status-controls">
+                <button class="arrow-btn" onclick="changeStat('pa', -1)">◀</button>
+                <input type="number" id="curr-pa" value="10" onchange="updateBar('pa')">
+                <span class="sep">/</span>
+                <input type="number" id="max-pa" value="10" onchange="updateBar('pa')">
+                <button class="arrow-btn" onclick="changeStat('pa', 1)">▶</button>
+            </div>
+        </div>
+
+        <!-- Sanidade (PS) -->
+        <div class="status-row">
+            <span class="status-label">[PS]</span>
+            <div class="status-bar-bg"><div id="bar-ps" class="status-fill bg-cyan" style="width: 100%;"></div></div>
+            <div class="status-controls">
+                <button class="arrow-btn" onclick="changeStat('ps', -1)">◀</button>
+                <input type="number" id="curr-ps" value="15" onchange="updateBar('ps')">
+                <span class="sep">/</span>
+                <input type="number" id="max-ps" value="15" onchange="updateBar('ps')">
+                <button class="arrow-btn" onclick="changeStat('ps', 1)">▶</button>
+            </div>
+        </div>
+    </div>
 
     <div id="area-ficha" class="page-area active">
         <section class="section-box">
@@ -475,12 +585,95 @@
         a.download = 'ficha_abyss.json'; a.click();
     }
 
-    window.onload = () => { sheet.pericias = periciasDados.map(p => ({ ...p, t: 0, m: 0 })); render(); };
-    function toggleSidebar() {
-    const sidebar = document.getElementById('main-sidebar');
-    sidebar.classList.toggle('closed');
+    window.onload = () => {
+    // Primeiro cria a estrutura básica de perícias
+    sheet.pericias = periciasDados.map(p => ({ ...p, t: 0, m: 0 }));
+    
+    // Depois tenta carregar o que está salvo no navegador
+    carregarDoNavegador();
+    
+    // Se não tinha nada salvo, o render() padrão rodará dentro do carregar ou aqui
+    render(); 
+};
+    
+    function updateBar(id) {
+    const current = parseInt(document.getElementById(`curr-${id}`).value) || 0;
+    const max = parseInt(document.getElementById(`max-${id}`).value) || 1;
+    const percentage = Math.min(Math.max((current / max) * 100, 0), 100);
+    document.getElementById(`bar-${id}`).style.width = percentage + "%";
 }
+
+function changeStat(id, amount) {
+    const input = document.getElementById(`curr-${id}`);
+    const max = parseInt(document.getElementById(`max-${id}`).value) || 0;
+    let newVal = parseInt(input.value) + amount;
+    
+    // Trava entre 0 e o valor máximo definido pelo jogador
+    if (newVal < 0) newVal = 0;
+    if (newVal > max) newVal = max;
+    
+    input.value = newVal;
+    updateBar(id);
+}
+
+// Inicializa o visual das barras ao carregar
+window.addEventListener('load', () => {
+    ['pv', 'pa', 'ps'].forEach(updateBar);
+});
+
+function salvarNoNavegador() {
+    // Captura os valores atuais dos recursos (PV, PA, PS) antes de salvar
+    const recursos = {
+        pv: { curr: document.getElementById('curr-pv').value, max: document.getElementById('max-pv').value },
+        pa: { curr: document.getElementById('curr-pa').value, max: document.getElementById('max-pa').value },
+        ps: { curr: document.getElementById('curr-ps').value, max: document.getElementById('max-ps').value }
+    };
+
+    // Monta o objeto completo para salvar
+    const dadosParaSalvar = {
+        nickname: document.getElementById('user-nickname').value,
+        atributos: sheet.atributos,
+        habilidades: sheet.habilidades,
+        recursos: recursos,
+        dificuldade: sheet.dificuldade
+    };
+
+    // Salva no localStorage com a chave 'ficha_abyss_v1'
+    localStorage.setItem('ficha_abyss_v1', JSON.stringify(dadosParaSalvar));
+    
+    alert("Progresso salvo no navegador!");
+}
+function carregarDoNavegador() {
+    const salvo = localStorage.getItem('ficha_abyss_v1');
+    
+    if (salvo) {
+        const dados = JSON.parse(salvo);
+        
+        // 1. Restaura Nickname
+        document.getElementById('user-nickname').value = dados.nickname || "";
+        
+        // 2. Restaura Atributos e Habilidades no objeto 'sheet'
+        sheet.atributos = dados.atributos;
+        sheet.habilidades = dados.habilidades;
+        sheet.dificuldade = dados.dificuldade || 'normal';
+        
+        // 3. Restaura os inputs de recursos (PV, PA, PS)
+        if (dados.recursos) {
+            ['pv', 'pa', 'ps'].forEach(id => {
+                document.getElementById(`curr-${id}`).value = dados.recursos[id].curr;
+                document.getElementById(`max-${id}`).value = dados.recursos[id].max;
+            });
+        }
+
+        // 4. Re-renderiza a interface para mostrar os dados novos
+        render(); 
+        setDif(sheet.dificuldade);
+        ['pv', 'pa', 'ps'].forEach(updateBar);
+        
+        console.log("Ficha carregada do armazenamento local.");
+    }
+}
+
 </script>
 </body>
 </html>
-
