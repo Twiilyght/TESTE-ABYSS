@@ -7,6 +7,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
     
+/* Container de status atualizado para aceitar os badges de defesa */
+.header-status-container {
+    position: relative; /* Para posicionar a defesa dentro */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 auto 30px auto;
+    max-width: 500px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* Área compacta para Defesa e RD */
+.mini-stats-overlay {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.mini-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mini-stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--text-gold);
+}
+
+.mini-stat-input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    font-family: 'Cinzel';
+    font-size: 1rem;
+    width: 40px;
+    text-align: center;
+    border-radius: 4px;
+    outline: none;
+}
+
+.mini-stat-input:focus {
+    border-color: var(--light-purple);
+    background: rgba(123, 31, 162, 0.1);
+}
     /* Modificações na Sidebar para permitir retração */
 .sidebar { 
     position: fixed; 
@@ -240,6 +291,57 @@
 .arrow-btn:hover { color: var(--light-purple); transform: scale(1.2); }
 .sep { color: #555; font-size: 0.8rem; }
    
+/* --- LAYOUT DO INVENTÁRIO (GRID) --- */
+.inventory-wrapper {
+    display: grid;
+    grid-template-columns: 80px 1fr; /* Coluna esquerda (80px) e o resto para o centro */
+    grid-template-rows: auto auto;
+    column-gap: 20px;
+    row-gap: 30px;
+    padding-top: 10px;
+}
+
+/* Os "Quadrados" (Slots) */
+.inv-slot {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-light);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.8rem;
+    padding: 6px;
+    resize: none; /* Impede o jogador de redimensionar */
+    outline: none;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    overflow: hidden; /* Esconde a barra de rolagem */
+}
+
+.inv-slot:focus {
+    border-color: var(--light-purple);
+    background: rgba(123, 31, 162, 0.1);
+    box-shadow: 0 0 10px rgba(123, 31, 162, 0.4), inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+/* Zonas do Grid do Inventário */
+.inv-equip-zone { 
+    grid-column: 1; grid-row: 1; 
+    display: grid; grid-template-rows: repeat(5, 80px); gap: 10px; 
+}
+.inv-main-zone { 
+    grid-column: 2; grid-row: 1; 
+    display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 80px; gap: 10px; 
+}
+.inv-utility-zone { 
+    grid-column: 1; grid-row: 2; 
+    display: grid; grid-template-rows: 80px; gap: 10px; 
+}
+.inv-quick-zone { 
+    grid-column: 2; grid-row: 2; 
+    display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: 80px; gap: 10px; 
+}
+   
     </style>
 </head>
 <body>
@@ -247,6 +349,7 @@
 <div class="sidebar">
     <button class="sidebar-btn active" id="btn-ficha" onclick="mudarArea('ficha')">📜</button>
     <button class="sidebar-btn" id="btn-combate" onclick="mudarArea('combate')">⚔️</button>
+    <button class="sidebar-btn" id="btn-inventario" onclick="mudarArea('inventario')">🎒</button>
     <button class="sidebar-btn" onclick="salvarNoNavegador()">💾</button>
 </div>
 
@@ -298,6 +401,17 @@
                 <button class="arrow-btn" onclick="changeStat('ps', 1)">▶</button>
             </div>
         </div>
+        
+        <div class="mini-stats-overlay">
+        <div class="mini-stat-item">
+            <span class="mini-stat-label">DEFESA</span>
+            <input type="number" id="val-defesa" class="mini-stat-input" value="10">
+        </div>
+        <div class="mini-stat-item">
+            <span class="mini-stat-label">RD</span>
+            <input type="number" id="val-rd" class="mini-stat-input" value="0">
+          </div>
+       </div>
     </div>
 
     <div id="area-ficha" class="page-area active">
@@ -338,6 +452,58 @@
         </section>
     </div>
 </div>
+
+<div id="area-inventario" class="page-area">
+        <section class="section-box">
+            <div class="section-title">Inventário</div>
+            
+            <div class="inventory-wrapper">
+                <div class="inv-equip-zone">
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                </div>
+
+                <div class="inv-main-zone">
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                </div>
+
+                <div class="inv-utility-zone">
+                    <textarea class="inv-slot"></textarea>
+                </div>
+
+                <div class="inv-quick-zone">
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                    <textarea class="inv-slot"></textarea>
+                </div>
+            </div>
+
+        </section>
+    </div>
 
 <div id="central-popup">
     <div class="ornament tl"></div><div class="ornament tr"></div>
@@ -411,13 +577,18 @@
     ];
 
     function getNivelSucesso(dado, total) {
-        const dts = dtTabela[sheet.dificuldade];
-        if (dado === 1) return { txt: "FALHA CRÍTICA", cor: "#8b0000" };
-        if (dado === 20 || total >= 21) return { txt: "SUCESSO EXTREMO", cor: "#00ff88" };
-        if (total === 20) return { txt: "SUCESSO BOM", cor: "#7fffd4" }; // Verde-água
-        if (total >= dts.sucesso) return { txt: "SUCESSO NORMAL", cor: "#4488ff" };
-        return { txt: "FALHA", cor: "#ff4444" };
-    }
+            const dts = dtTabela[sheet.dificuldade];
+            if (dado === 1) return { txt: "FALHA CRÍTICA", cor: "#8b0000" };
+            
+            // Sucesso Extremo APENAS se o dado natural for 20
+            if (dado === 20) return { txt: "SUCESSO EXTREMO", cor: "#00ff88" }; 
+            
+            // Se o total for maior ou igual a 20 (mas o dado não foi 20), é Sucesso Bom
+            if (total >= 20) return { txt: "SUCESSO BOM", cor: "#7fffd4" }; 
+            
+            if (total >= dts.sucesso) return { txt: "SUCESSO NORMAL", cor: "#4488ff" };
+            return { txt: "FALHA", cor: "#ff4444" };
+        }
 
     function spawnPopup(titulo, subtitulo, total, corStatus, txtStatus, detalhes = "") {
         document.getElementById('pop-content').innerHTML = `
@@ -506,7 +677,7 @@
 
         document.getElementById('skills-container').innerHTML = sheet.pericias.map(p => `
             <div class="skill-item" onclick="realizarRolagem('${p.a}', 0, '${p.n}', true, '${p.n}')">
-                <div><span class="skill-name">${p.n}</span><br><small style="color:#666">${p.a}</small></div>
+                <div><span class="skill-name">${p.n} <small style="color:#888; font-weight:normal;">[${p.a}]</small></span></div>
                 <div style="display:flex; gap:5px" onclick="event.stopPropagation()">
                     <select onchange="atualizarPericia('${p.n}', 't', this.value)" style="background:#000; color:var(--light-purple); border:1px solid #444;">
                         <option value="0" ${p.t==0?'selected':''}>+0</option>
@@ -622,57 +793,87 @@ window.addEventListener('load', () => {
 });
 
 function salvarNoNavegador() {
-    // Captura os valores atuais dos recursos (PV, PA, PS) antes de salvar
     const recursos = {
         pv: { curr: document.getElementById('curr-pv').value, max: document.getElementById('max-pv').value },
         pa: { curr: document.getElementById('curr-pa').value, max: document.getElementById('max-pa').value },
         ps: { curr: document.getElementById('curr-ps').value, max: document.getElementById('max-ps').value }
     };
 
-    // Monta o objeto completo para salvar
+    const estatisticas = {
+        defesa: document.getElementById('val-defesa').value,
+        rd: document.getElementById('val-rd').value,
+        desloc: document.getElementById('val-desloc').value
+    };
+
+    // Coleta o valor de TODOS os slots do inventário na ordem em que aparecem
+    const invSlots = Array.from(document.querySelectorAll('.inv-slot')).map(slot => slot.value);
+
     const dadosParaSalvar = {
         nickname: document.getElementById('user-nickname').value,
         atributos: sheet.atributos,
         habilidades: sheet.habilidades,
         recursos: recursos,
+        estatisticas: estatisticas,
+        inventarioSlots: invSlots, // Salva o array do inventário
         dificuldade: sheet.dificuldade
     };
 
-    // Salva no localStorage com a chave 'ficha_abyss_v1'
     localStorage.setItem('ficha_abyss_v1', JSON.stringify(dadosParaSalvar));
-    
     alert("Progresso salvo no navegador!");
 }
+
 function carregarDoNavegador() {
     const salvo = localStorage.getItem('ficha_abyss_v1');
     
     if (salvo) {
         const dados = JSON.parse(salvo);
         
-        // 1. Restaura Nickname
         document.getElementById('user-nickname').value = dados.nickname || "";
         
-        // 2. Restaura Atributos e Habilidades no objeto 'sheet'
-        sheet.atributos = dados.atributos;
-        sheet.habilidades = dados.habilidades;
+        if (dados.inventarioSlots && Array.isArray(dados.inventarioSlots)) {
+            const slots = document.querySelectorAll('.inv-slot');
+            dados.inventarioSlots.forEach((textoSalvo, index) => {
+                if (slots[index]) {
+                    slots[index].value = textoSalvo;
+                }
+            });
+        }
+        
+        sheet.atributos = dados.atributos || sheet.atributos;
+        sheet.habilidades = dados.habilidades || [];
         sheet.dificuldade = dados.dificuldade || 'normal';
         
-        // 3. Restaura os inputs de recursos (PV, PA, PS)
+        // Aqui garante que perícias existam, carregando do localStorage ou usando a base inicial
+        if(dados.pericias && Array.isArray(dados.pericias)) {
+            sheet.pericias = dados.pericias;
+        } else {
+            // Caso não tenha no storage, inicializa com as perícias padrão
+            sheet.pericias = periciasDados.map(p => ({ ...p, t: 0, m: 0 }));
+        }
+        
         if (dados.recursos) {
             ['pv', 'pa', 'ps'].forEach(id => {
-                document.getElementById(`curr-${id}`).value = dados.recursos[id].curr;
-                document.getElementById(`max-${id}`).value = dados.recursos[id].max;
+                if(document.getElementById(`curr-${id}`)) {
+                    document.getElementById(`curr-${id}`).value = dados.recursos[id].curr;
+                    document.getElementById(`max-${id}`).value = dados.recursos[id].max;
+                }
             });
         }
 
-        // 4. Re-renderiza a interface para mostrar os dados novos
-        render(); 
+        if (dados.estatisticas) {
+            if(document.getElementById('val-defesa')) document.getElementById('val-defesa').value = dados.estatisticas.defesa || 10;
+            if(document.getElementById('val-rd')) document.getElementById('val-rd').value = dados.estatisticas.rd || 0;
+            if(document.getElementById('val-desloc')) document.getElementById('val-desloc').value = dados.estatisticas.desloc || 9;
+        }
+
+        render();
         setDif(sheet.dificuldade);
         ['pv', 'pa', 'ps'].forEach(updateBar);
         
         console.log("Ficha carregada do armazenamento local.");
     }
 }
+
 
 </script>
 </body>
